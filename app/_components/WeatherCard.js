@@ -4,42 +4,46 @@ export default function WeatherCard({
   temp,
   conditionText,
   conditionIcon,
+  humidity,
+  wind,
+  highTemp,
 }) {
   return (
     <div className="relative flex flex-col items-center justify-center
-                    w-64 h-72 rounded-xl shadow-xl
-                    bg-white/10 backdrop-blur-lg
-                    text-white p-6 border border-white/20
-                    hover:scale-105 transition-transform duration-300">
+                    w-72 h-80 rounded-2xl shadow-lg
+                    bg-white/10 backdrop-blur-md
+                    text-white p-6 border border-white/30
+                    transition-transform transform hover:scale-105 duration-300">
       
-      {/* Decorative blurred highlight */}
-      <div className="absolute w-32 h-32 bg-white/30 rounded-full blur-2xl 
-                      top-[-2rem] left-[4rem] pointer-events-none" />
-
       {/* Weather Icon */}
       <Image
         src={conditionIcon}
         alt={conditionText}
-        width={120}
-        height={120}
-        className="mb-2 z-10"
+        width={80}
+        height={80}
+        className="mb-2"
       />
 
       {/* Temperature */}
-      <p className="text-5xl font-extrabold z-10">
-        {temp}
-      </p>
+      <p className="text-5xl font-extrabold">{temp}</p>
 
       {/* Condition */}
-      <p className="text-lg mt-1 z-10">{conditionText}</p>
+      <p className="text-lg mt-2 font-medium text-gray-200">{conditionText}</p>
 
-      {/* Location */}
-      <p className="text-md mt-1 font-semibold z-10">
-        {locationName}
-      </p>
+      {/* High Temp */}
+      {highTemp && <p className="text-md mt-1 text-gray-300">🔥 Max Temp: {highTemp}</p>}
 
-      {/* Subtle overlay for extra gloss */}
-      <div className="absolute inset-0 bg-white/10 opacity-10 rounded-xl pointer-events-none" />
+      {/* Humidity */}
+      {humidity && <p className="text-md mt-1 text-gray-300">💧 Humidity: {humidity}</p>}
+
+      {/* Wind Speed */}
+      {wind && <p className="text-md mt-1 text-gray-300">🌬 Wind: {wind}</p>}
+
+      {/* Location Name */}
+      <p className="text-lg mt-4 font-bold text-gray-100">{locationName}</p>
+
+      {/* Glassmorphism Overlay */}
+      <div className="absolute inset-0 bg-white/10 opacity-10 rounded-2xl pointer-events-none" />
     </div>
   );
 }

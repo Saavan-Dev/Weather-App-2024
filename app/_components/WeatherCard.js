@@ -10,7 +10,7 @@ export default function WeatherCard({
 }) {
   return (
     <div className="relative flex flex-col items-center justify-center
-                    w-72 h-80 rounded-2xl shadow-lg
+                    w-72 h-90 rounded-2xl shadow-lg
                     bg-white/10 backdrop-blur-md
                     text-white p-6 border border-white/30
                     transition-transform transform hover:scale-105 duration-300">
@@ -19,9 +19,9 @@ export default function WeatherCard({
       <Image
         src={conditionIcon}
         alt={conditionText}
-        width={80}
-        height={80}
-        className="mb-2"
+        width={120}
+        height={120}
+        className="mb-0"
       />
 
       {/* Temperature */}

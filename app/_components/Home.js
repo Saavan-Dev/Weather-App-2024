@@ -19,7 +19,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false); // Track loading state
   const api_key = process.env.NEXT_PUBLIC_API_KEY;
   const base_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
+  const base_URL1 = process.env.NEXT_PUBLIC_BASE_URL1;
   const [debouncedInput, setDebouncedInput] = useState("");
 
   // const fetchWeatherData = useCallback(
@@ -71,7 +71,7 @@ export default function Home() {
       setIsLoading(true);
 
       const responses = await Promise.all(
-        locations.map((loc) => axios.get(`https://wttr.in/${loc}?format=j1`))
+        locations.map((loc) => axios.get(`${base_URL1}/${loc}?format=j1`))
       );
 
       console.log("Responses:", responses);
@@ -103,29 +103,67 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [base_URL1]);
 
   
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedInput(inputText);
-    }, 500); // Wait 500ms before setting debounced input
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     setDebouncedInput(inputText);
+  //   }, 500); // Wait 500ms before setting debounced input
 
-    return () => clearTimeout(handler); // Clear timeout on input change
-  }, [inputText]);
+  //   return () => clearTimeout(handler); // Clear timeout on input change
+  // }, [inputText]);
+
+  // useEffect(() => {
+  //   setWeatherData([]); // Reset data when input changes
+
+  //   if (isMultiple) {
+  //     fetchWeatherData(["Mumbai", "Delhi"]);
+  //   } else if (debouncedInput.trim()) {
+  //     // ✅ Only fetch when debounced input is valid
+  //     fetchWeatherData([debouncedInput]);
+  //   } else {
+  //     setWeatherData([]); // ✅ Clear data when input is empty
+  //   }
+  // }, [debouncedInput, isMultiple, fetchWeatherData]);
 
   useEffect(() => {
     setWeatherData([]); // Reset data when input changes
-
+  
     if (isMultiple) {
       fetchWeatherData(["Mumbai", "Delhi"]);
-    } else if (debouncedInput.trim()) {
-      // ✅ Only fetch when debounced input is valid
-      fetchWeatherData([debouncedInput]);
+    } else if (inputText.trim() === "") {
+      // No input provided: get current location name via geolocation + reverse geocoding
+      if (typeof window !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+              // Reverse geocode using BigDataCloud's free API
+              const response = await fetch(
+                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+              );
+              const data = await response.json();
+              // Use city or fallback to locality/principalSubdivision if available
+              const locationName =
+                data.city || data.locality || data.principalSubdivision || "Your Location";
+              fetchWeatherData([locationName]);
+            } catch (error) {
+              console.error("Error fetching location name:", error);
+            }
+          },
+          (error) => {
+            console.error("Error retrieving geolocation:", error);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
     } else {
-      setWeatherData([]); // ✅ Clear data when input is empty
+      // Valid input is provided, so use the debounced value
+      fetchWeatherData([debouncedInput]);
     }
-  }, [debouncedInput, isMultiple, fetchWeatherData]);
+  }, [inputText, isMultiple, debouncedInput, fetchWeatherData]);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-600 text-white p-5">

@@ -106,65 +106,59 @@ export default function Home() {
   }, [base_URL1]);
 
   
-  // useEffect(() => {
-  //   const handler = setTimeout(() => {
-  //     setDebouncedInput(inputText);
-  //   }, 500); // Wait 500ms before setting debounced input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedInput(inputText);
+    }, 500); // Wait 500ms before setting debounced input
+  
+    return () => clearTimeout(handler);
+  }, [inputText]);
 
-  //   return () => clearTimeout(handler); // Clear timeout on input change
-  // }, [inputText]);
-
-  // useEffect(() => {
-  //   setWeatherData([]); // Reset data when input changes
-
-  //   if (isMultiple) {
-  //     fetchWeatherData(["Mumbai", "Delhi"]);
-  //   } else if (debouncedInput.trim()) {
-  //     // ✅ Only fetch when debounced input is valid
-  //     fetchWeatherData([debouncedInput]);
-  //   } else {
-  //     setWeatherData([]); // ✅ Clear data when input is empty
-  //   }
-  // }, [debouncedInput, isMultiple, fetchWeatherData]);
-
+  
   useEffect(() => {
     setWeatherData([]); // Reset data when input changes
   
     if (isMultiple) {
       fetchWeatherData(["Mumbai", "Delhi"]);
-    } else if (inputText.trim() === "") {
-      // No input provided: get current location name via geolocation + reverse geocoding
-      if (typeof window !== "undefined" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const { latitude, longitude } = position.coords;
-            try {
-              // Reverse geocode using BigDataCloud's free API
-              const response = await fetch(
-                `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-              );
-              const data = await response.json();
-              // Use city or fallback to locality/principalSubdivision if available
-              const locationName =
-                data.city || data.locality || data.principalSubdivision || "Your Location";
-              fetchWeatherData([locationName]);
-            } catch (error) {
-              console.error("Error fetching location name:", error);
-            }
-          },
-          (error) => {
-            console.error("Error retrieving geolocation:", error);
-          }
-        );
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-      }
-    } else {
-      // Valid input is provided, so use the debounced value
+    }else if(debouncedInput.trim().length > 0) {
       fetchWeatherData([debouncedInput]);
+    } 
+    // else if (debouncedInput.trim().length === 0) {
+    //   // No input provided: get current location name via geolocation + reverse geocoding
+    //   if (typeof window !== "undefined" && navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(
+    //       async (position) => {
+    //         const { latitude, longitude } = position.coords;
+    //         try {
+    //           // Reverse geocode using BigDataCloud's free API
+    //           const response = await fetch(
+    //             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+    //           );
+    //           const data = await response.json();
+    //           // Use city or fallback to locality/principalSubdivision if available
+    //           const locationName =
+    //             data.city || data.locality || data.principalSubdivision || "Your Location";
+    //           fetchWeatherData([locationName]);
+    //         } catch (error) {
+    //           setWeatherData([]);
+    //           console.error("Error fetching location name:", error);
+    //         }
+    //       },
+    //       (error) => {
+    //         setWeatherData([]);
+    //         console.error("Error retrieving geolocation:", error);
+    //       }
+    //     );
+    //   }
+    //    else {
+    //     setWeatherData([]);
+    //     console.error("Geolocation is not supported by this browser.");
+    //   }
+    // } 
+    else {
+      setWeatherData([]);
     }
   }, [inputText, isMultiple, debouncedInput, fetchWeatherData]);
-
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-600 text-white p-5">
       <div className=" max-w-xl mx-auto space-y-6">

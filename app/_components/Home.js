@@ -114,15 +114,27 @@ export default function Home() {
     return () => clearTimeout(handler);
   }, [inputText]);
 
-  
   useEffect(() => {
     setWeatherData([]); // Reset data when input changes
-  
+
     if (isMultiple) {
       fetchWeatherData(["Mumbai", "Delhi"]);
-    }else if(debouncedInput.trim().length > 0) {
+    } else if (debouncedInput.trim()) {
+      // ✅ Only fetch when debounced input is valid
       fetchWeatherData([debouncedInput]);
-    } 
+    } else {
+      setWeatherData([]); // ✅ Clear data when input is empty
+    }
+  }, [debouncedInput, isMultiple, fetchWeatherData]);
+
+  // useEffect(() => {
+  //   setWeatherData([]); // Reset data when input changes
+  
+  //   if (isMultiple) {
+  //     fetchWeatherData(["Mumbai", "Delhi"]);
+  //   }else if(debouncedInput.trim().length > 0) {
+  //     fetchWeatherData([debouncedInput]);
+  //   } 
     // else if (debouncedInput.trim().length === 0) {
     //   // No input provided: get current location name via geolocation + reverse geocoding
     //   if (typeof window !== "undefined" && navigator.geolocation) {
@@ -155,10 +167,10 @@ export default function Home() {
     //     console.error("Geolocation is not supported by this browser.");
     //   }
     // } 
-    else {
-      setWeatherData([]);
-    }
-  }, [inputText, isMultiple, debouncedInput, fetchWeatherData]);
+    // else {
+    //   setWeatherData([]);
+    // }
+  // }, [inputText, isMultiple, debouncedInput, fetchWeatherData]);
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-400 to-purple-600 text-white p-5">
       <div className=" max-w-xl mx-auto space-y-6">

@@ -82,6 +82,7 @@ export default function Home() {
       setWeatherData([]);
     }
   }, [debouncedInput, isMultiple, fetchWeatherData]);
+
   // Function to speak text using Speech Synthesis API
   const speakWeatherStory = (text) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -97,11 +98,10 @@ export default function Home() {
     try {
       const response = await axios.post(
         "/api/generate-weather-story",
-        { weatherData},
+        { weatherData },
         { headers: { "Content-Type": "application/json" } }
       );
       const generatedStory = response.data.story;
-      generatedStory.forEach
       setStory(generatedStory);
       // Speak the generated weather story aloud
       speakWeatherStory(generatedStory);
@@ -110,16 +110,16 @@ export default function Home() {
     }
   };
 
+  // Determine background classes based on the first weather data (if available)
+  const backgroundClasses = weatherData.length
+    ? getBackgroundClasses(weatherData[0].conditionText)
+    : "bg-gradient-to-r from-blue-400 to-purple-600";
+
   return (
     <div
-      className="min-h-screen text-white p-5 transition-all duration-500"
-      style={{
-        backgroundImage: "linear-gradient(to right, #4299e1, #9f7aea)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      className={`min-h-screen text-white p-5 transition-all duration-500 ${backgroundClasses}`}
     >
-      <div className=" max-w-2xl mx-auto space-y-6 bg-black bg-opacity-50 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+      <div className="max-w-2xl mx-auto space-y-6 bg-black bg-opacity-50 p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold text-center">Weather App</h1>
         {!isMultiple && (
           <InputField inputText={inputText} setInputText={setInputText} />
@@ -128,7 +128,7 @@ export default function Home() {
         <div
           className={`grid ${
             isMultiple ? "grid-cols-1 sm:grid-cols-2 gap-4" : "grid-cols-1"
-          } `}
+          }`}
         >
           {isLoading ? (
             <div className="col-span-1 sm:col-span-2 p-6 rounded-lg shadow-lg bg-gradient-to-r from-white to-gray-50 flex flex-col items-center justify-center space-y-4">
@@ -140,7 +140,6 @@ export default function Home() {
               >
                 <span className="sr-only">Loading...</span>
               </div>
-
               {/* Loading Text */}
               <h2 className="text-xl font-semibold text-gray-700 animate-pulse">
                 Loading...

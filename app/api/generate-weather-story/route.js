@@ -14,7 +14,6 @@ export async function POST(request) {
   try {
     await loadModel(); // Ensure the model is loaded
 
-    console.log("Request body:", request);
     const { weatherData } = await request.json();
 
     if (!weatherData || !Array.isArray(weatherData)) {
@@ -25,8 +24,6 @@ export async function POST(request) {
       if (!data) return "No weather data provided.";
       return `The weather in ${data.locationName} is currently ${data.temp} with ${data.conditionText}. The high temperature for today is ${data.highTemp}. The wind speed is ${data.wind}, and the humidity level is ${data.humidity}.`;
     };
-
-    // console.log("Received weather data:", weatherData);
 
     // Use `for...of` instead of `forEach` to properly handle async/await
     let storyParts = [];

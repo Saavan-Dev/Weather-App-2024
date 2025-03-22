@@ -62,7 +62,7 @@ export default function Home() {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedInput(inputText);
-    }, 500);
+    }, 540);
     return () => {
       clearTimeout(handler);
       setStory("");
@@ -71,7 +71,7 @@ export default function Home() {
 
   useEffect(() => {
     setWeatherData([]);
-    if (isMultiple) {
+        if (isMultiple) {
       // Load default cities: Mumbai and Delhi
       fetchWeatherData(["Mumbai", "Delhi"]);
     } else if (debouncedInput.trim()) {

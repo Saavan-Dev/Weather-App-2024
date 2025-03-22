@@ -6,11 +6,9 @@ import WeatherCard from "./WeatherCard"; // Assuming this component exists
 import InputField from "./InputField"; // Assuming this component exists
 import ToggleButton from "./ToggleButton"; // Assuming this component exists
 import {
-  getConditionCode,
   getIconPath,
   processWeatherData,
 } from "../../utils/wrrtn-in"; // Assuming these utilities exist
-import Image from "next/image"; // Import is correct, but not directly used in the provided code
 
 export default function Home() {
   const [inputText, setInputText] = useState("");

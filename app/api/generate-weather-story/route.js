@@ -13,7 +13,7 @@ async function loadModel() {
   if (!textGenerator) {
     // If the transformers library supports a cacheDir option, you can pass it here.
     // If not, our fs patch should redirect any writes from the default path to /tmp/xenova-cache.
-    textGenerator = await pipeline("text2text-generation", "Xenova/flan-t5-base", {
+    textGenerator = await pipeline("text2text-generation", "Xenova/flan-t5-small", {
       // Optionally, if supported:
       cache_dir: '/tmp/xenova-cache'
     });
@@ -49,7 +49,7 @@ export async function POST(request) {
       `;
 
       const output = await textGenerator(prompt, {
-        max_new_tokens: 150,
+        max_new_tokens: 100,
         repetition_penalty: 4.0,
         truncation: true,
       });

@@ -5,10 +5,7 @@ import axios from "axios";
 import WeatherCard from "./WeatherCard"; // Assuming this component exists
 import InputField from "./InputField"; // Assuming this component exists
 import ToggleButton from "./ToggleButton"; // Assuming this component exists
-import {
-  getIconPath,
-  processWeatherData,
-} from "../../utils/wrrtn-in"; // Assuming these utilities exist
+import { getIconPath, processWeatherData } from "../../utils/wrrtn-in"; // Assuming these utilities exist
 
 export default function Home() {
   const [inputText, setInputText] = useState("");
@@ -19,6 +16,7 @@ export default function Home() {
   const base_URL1 = process.env.NEXT_PUBLIC_BASE_URL1;
   const [debouncedInput, setDebouncedInput] = useState("");
   const [story, setStory] = useState("");
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
 
   // Fetch weather data
   const fetchWeatherData = useCallback(
@@ -71,7 +69,7 @@ export default function Home() {
 
   useEffect(() => {
     setWeatherData([]);
-        if (isMultiple) {
+    if (isMultiple) {
       // Load default cities: Mumbai and Delhi
       fetchWeatherData(["Mumbai", "Delhi"]);
     } else if (debouncedInput.trim()) {
@@ -94,6 +92,7 @@ export default function Home() {
   // Generate AI Weather Story and speak it out
   const fetchWeatherStory = async () => {
     try {
+      setIsLoadingReport(true);
       const response = await axios.post(
         "/api/generate-weather-story",
         { weatherData },
@@ -105,6 +104,8 @@ export default function Home() {
       speakWeatherStory(generatedStory);
     } catch (error) {
       console.error("Failed to generate story:", error);
+    } finally {
+      setIsLoadingReport(false);
     }
   };
 
@@ -165,9 +166,13 @@ export default function Home() {
         <div className="flex flex-col items-center gap-4 mt-6">
           <button
             onClick={fetchWeatherStory}
-            className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
           >
-            Generate Weather Report
+            {isLoadingReport ? (
+              <div className="w-6 h-6 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin"></div>
+            ) : (
+              "Generate Weather Report"
+            )}
           </button>
           {story && (
             <div className="bg-black bg-opacity-70 p-4 rounded-lg shadow-md mt-4 max-w-md text-center">

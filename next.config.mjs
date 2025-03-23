@@ -5,10 +5,22 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "cdn.weatherapi.com",
-        port: "", // Leave empty if not using a specific port
-        pathname: "/**", // Match all paths under this domain
+        port: "",
+        pathname: "/**",
       },
     ],
+  },
+  webpack: (config) => {
+    // Ignore system files that cause EINVAL errors
+    config.watchOptions = {
+      ignored: [
+        'C:/DumpStack.log.tmp',
+        'C:/hiberfil.sys',
+        'C:/pagefile.sys',
+        'C:/swapfile.sys'
+      ]
+    };
+    return config;
   },
 };
 

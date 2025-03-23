@@ -28,7 +28,7 @@ export default function WeatherCard({
       <p className="text-5xl font-extrabold">{temp}</p>
 
       {/* Condition */}
-      <p className="text-lg mt-2 font-medium text-gray-200">{conditionText}</p>
+      <p className="text-lg mt-2 font-medium text-gray-200 text-center">{conditionText}</p>
 
       {/* High Temp */}
       {highTemp && <p className="text-md mt-1 text-gray-300">🔥 Max Temp: {highTemp}</p>}

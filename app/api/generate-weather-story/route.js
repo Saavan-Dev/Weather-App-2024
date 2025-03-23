@@ -1,58 +1,61 @@
-import { existsSync, mkdirSync } from 'fs';
+import "@/utils/patch-fs";
 import { NextResponse } from "next/server";
 import { pipeline } from "@xenova/transformers";
+import fs from "fs"; // Keep in case you need direct fs usage
 
-// Global variable to hold the model.
+// Global variable to hold the model, so it's only loaded once
 let textGenerator = null;
 
 async function loadModel() {
-  // Determine the cache directory, default to /tmp/xenova-cache.
-  const cacheDir = process.env.XENOVA_CACHE_DIR || '/tmp/xenova-cache';
-  
-  // Ensure the directory exists.
-  if (!existsSync(cacheDir)) {
-    mkdirSync(cacheDir, { recursive: true });
-  }
-  
-  // Pass the cacheDir option if supported by the pipeline.
+  // If we haven't already loaded the model, load it
   if (!textGenerator) {
-    textGenerator = await pipeline("text2text-generation", "Xenova/flan-t5-base", { cacheDir });
+    textGenerator = await pipeline("text2text-generation", "Xenova/flan-t5-base");
   }
 }
 
 export async function POST(request) {
   try {
-    await loadModel(); // Ensure the model is loaded
+    // Ensure the model is loaded
+    await loadModel();
 
     const { weatherData } = await request.json();
-
     if (!weatherData || !Array.isArray(weatherData)) {
-      return NextResponse.json({ error: "Invalid or missing weather data" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid or missing weather data" },
+        { status: 400 }
+      );
     }
 
+    // Helper function to produce a short sentence from the data
     const generateSentence = (data) => {
       if (!data) return "No weather data provided.";
       return `The weather in ${data.locationName} is currently ${data.temp} with ${data.conditionText}. The high temperature for today is ${data.highTemp}. The wind speed is ${data.wind}, and the humidity level is ${data.humidity}.`;
     };
 
+    // Build the story from multiple weather data items
     let storyParts = [];
     for (const data of weatherData) {
       const prompt = `
-      You are a cheerful and engaging weather reporter. Craft a warm and conversational weather update based on the given data. Focus on what matters most to people—how the weather feels and what they should expect. Keep it light, engaging, and under 80 words. Avoid technical jargon or raw data—just a natural, friendly summary.  
-      
-      Weather data:  
-      ${generateSentence(data)}  
-      
-      Now, share your fun and relatable weather update:
+        You are a cheerful and engaging weather reporter. Craft a warm and conversational weather update based on the given data. Focus on what matters most to people—how the weather feels and what they should expect. Keep it light, engaging, and under 80 words. Avoid technical jargon or raw data—just a natural, friendly summary.
+        
+        Weather data:
+        ${generateSentence(data)}
+        
+        Now, share your fun and relatable weather update:
       `;
 
+      // Generate text
       const output = await textGenerator(prompt, {
         max_new_tokens: 250,
         repetition_penalty: 4.0,
         truncation: true,
       });
 
-      storyParts.push(output?.[0]?.generated_text || "I'm sorry, I couldn't generate a weather summary at this time.");
+      // If output is successful, store it; otherwise store a fallback message
+      storyParts.push(
+        output?.[0]?.generated_text ||
+          "I'm sorry, I couldn't generate a weather summary at this time."
+      );
     }
 
     const story = storyParts.join(" and ");

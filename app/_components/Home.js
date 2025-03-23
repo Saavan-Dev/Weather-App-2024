@@ -129,6 +129,10 @@ export default function Home() {
     ? getBackgroundClasses(weatherData[0].conditionText)
     : "bg-gradient-to-r from-blue-400 to-purple-600";
 
+  const setIsmultiple = () => {
+    setIsMultiple(!isMultiple);
+    setStory("");
+  };
   return (
     <div
       className={`min-h-screen text-white p-5 transition-all duration-500 ${backgroundClasses}`}
@@ -138,7 +142,7 @@ export default function Home() {
         {!isMultiple && (
           <InputField inputText={inputText} setInputText={setInputText} />
         )}
-        <ToggleButton isMultiple={isMultiple} setIsMultiple={setIsMultiple} />
+        <ToggleButton isMultiple={isMultiple} setIsMultiple={setIsmultiple} />
         <div
           className={`grid ${
             isMultiple ? "grid-cols-1 sm:grid-cols-2 gap-4" : "grid-cols-1"

@@ -1,4 +1,9 @@
 {
+    "functions": {
+        "api/generate-weather-story/**": {
+            "maxDuration": 60 
+        }
+    },
     "rewrites": [
         {
             "source": "/(.*)",

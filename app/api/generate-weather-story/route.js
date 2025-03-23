@@ -49,7 +49,7 @@ export async function POST(request) {
       `;
 
       const output = await textGenerator(prompt, {
-        max_new_tokens: 250,
+        max_new_tokens: 150,
         repetition_penalty: 4.0,
         truncation: true,
       });

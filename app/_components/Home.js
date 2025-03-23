@@ -85,10 +85,25 @@ export default function Home() {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1;
       utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
+      // Optionally, set a specific voice or language if needed:
+      // utterance.lang = 'en-US';
+  
+      const speakNow = () => {
+        window.speechSynthesis.speak(utterance);
+      };
+  
+      // Check if voices are already loaded
+      if (window.speechSynthesis.getVoices().length) {
+        speakNow();
+      } else {
+        // Wait for voices to be loaded on mobile
+        window.speechSynthesis.onvoiceschanged = () => {
+          speakNow();
+        };
+      }
     }
   };
-
+  
   // Generate AI Weather Story and speak it out
   const fetchWeatherStory = async () => {
     try {

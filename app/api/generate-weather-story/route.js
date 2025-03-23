@@ -6,7 +6,7 @@ let textGenerator = null;
 
 async function loadModel() {
   if (!textGenerator) {
-    textGenerator = await pipeline("text2text-generation", "Xenova/flan-t5-base",{ cacheDir: "/tmp/transformers-cache" });
+    textGenerator = await pipeline("text2text-generation", "Xenova/flan-t5-base", { disableDiskCache: true });
   }
 }
 

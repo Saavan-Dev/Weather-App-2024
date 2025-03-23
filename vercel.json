@@ -1,7 +1,7 @@
 {
     "functions": {
-        "api/generate-weather-story/**": {
-            "maxDuration": 60 
+        "app/api/generate-weather-story/route.js": {
+            "maxDuration": 60
         }
     },
     "rewrites": [
